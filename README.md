@@ -1,5 +1,7 @@
 # gh-runner-docker
-Gihthub action runner in docker
+Gihthub action runner in docker.
+
+**Note**: This is for ARM64 only for now. X64 runners are provided by GH too. ARM64 builds are done using qemu and thus are very slow. My OrangePi5+ is a beast in comparison. The build for [wg-ui-plus](https://github.com/vijaygill/wg-ui-plus) used totake more than 20 minutes in GH's own runner (using qemu) and my OrangePi5+ does that in less than 3 minutes!
 
 ## build image first
 Execute 
