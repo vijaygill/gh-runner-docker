@@ -24,4 +24,13 @@ then
     exit 1
 fi
 
-docker run -d --restart unless-stopped --user pi:pi --env GH_TOKEN="${GH_TOKEN}" --env RUNNER_NAME="${RUNNER_NAME}" --env GH_REPO="${GH_REPO}" -v /var/run/docker.sock:/var/run/docker.sock --network dockernet --name "gh-runner-${RUNNER_NAME}" gh-actions-runner
+UNAME=$(whoami)
+USERID=$(id -u)
+GRPID=$(cat /etc/group | grep docker| cut -d ":" -f3)
+
+CONTAINER_NAME="gh-runner-${RUNNER_NAME}"
+
+docker container kill ${CONTAINER_NAME}
+docker container rm ${CONTAINER_NAME}
+
+docker run -d --restart unless-stopped  --user ${USERID}:${GRPID} --env GH_TOKEN="${GH_TOKEN}" --env RUNNER_NAME="${RUNNER_NAME}" --env GH_REPO="${GH_REPO}" -v /var/run/docker.sock:/var/run/docker.sock --network dockernet --name "${CONTAINER_NAME}" gh-actions-runner
