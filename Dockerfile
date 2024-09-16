@@ -2,7 +2,7 @@ ARG UNAME=pi
 ARG UID=1000
 ARG GID=1000
 ARG RUNNER_ARCH=arm64
-ARG RUNNER_VER=2.317.0
+ARG RUNNER_VER=2.319.1
 ARG RUNNER_BIN=actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VER}.tar.gz
 
 FROM debian:latest
@@ -12,7 +12,7 @@ ARG GID
 ARG RUNNER_VER
 ARG RUNNER_BIN
 
-RUN apt-get update && apt-get install -y ca-certificates curl libicu72 libssl3 openssh-client curl && apt-get clean autoclean
+RUN apt-get update && apt-get install -y ca-certificates curl libicu72 libssl3 openssh-client curl gpg && apt-get clean autoclean
 RUN install -m 0755 -d /etc/apt/keyrings
 
 # Add Docker's official GPG key:
@@ -25,7 +25,10 @@ RUN echo \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && apt-get clean autoclean
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg;
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null;
+
+RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gh && apt-get clean autoclean
 
 RUN groupadd -g $GID -o $UNAME && useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
 RUN echo '%pi ALL=(ALL) NOPASSWD:ALL'>>/etc/sudoers
