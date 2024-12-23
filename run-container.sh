@@ -34,8 +34,8 @@ docker container kill ${CONTAINER_NAME}
 docker container rm ${CONTAINER_NAME}
 
 TEMP_DIR="${HOME}/temp/gh-runner-docker-temp/${CONTAINER_NAME}"
-TEMP_DIR="/tmp/${CONTAINER_NAME}"
+TEMP_DIR="/tmp/gh-runner-docker-temp/${CONTAINER_NAME}"
 
 mkdir -p "${TEMP_DIR}"
 
-docker run -d --restart unless-stopped  --user ${USERID}:${GRPID} --env GH_TOKEN="${GH_TOKEN}" --env RUNNER_NAME="${RUNNER_NAME}" --env GH_REPO="${GH_REPO}" -v /var/run/docker.sock:/var/run/docker.sock -v "${TEMP_DIR}":/tmp --network dockernet --name "${CONTAINER_NAME}" gh-actions-runner
+docker run -d --restart unless-stopped  --user ${USERID}:${GRPID} --env GH_TOKEN="${GH_TOKEN}" --env RUNNER_NAME="${RUNNER_NAME}" --env GH_REPO="${GH_REPO}" -v /var/run/docker.sock:/var/run/docker.sock --tmpfs /tmp --network dockernet --name "${CONTAINER_NAME}" gh-actions-runner
