@@ -37,7 +37,7 @@ RUN mkdir -p /home/pi/.ssh /home/pi/runner && chown -R pi:pi /home/pi && cd /hom
 
 COPY ./scripts/start.sh /home/pi/runner
 
-USER $UNAME
+#USER $UNAME
 
 WORKDIR /home/pi/runner
 
