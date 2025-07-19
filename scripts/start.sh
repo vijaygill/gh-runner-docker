@@ -32,6 +32,5 @@ then
 fi
 
 
-#./config.sh --unattended --disableupdate --url https://github.com/vijaygill/wg-ui-plus --token ${GH_TOKEN}
-./config.sh --unattended --disableupdate --replace --url https://github.com/${GH_REPO} --name ${RUNNER_NAME} --token ${GH_TOKEN}
+./config.sh --unattended --replace --url https://github.com/${GH_REPO} --name ${RUNNER_NAME} --token ${GH_TOKEN}
 ./run.sh
