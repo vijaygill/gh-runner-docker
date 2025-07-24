@@ -33,15 +33,18 @@ RUN groupadd -g $GID -o $UNAME && useradd -m -u $UID -g $GID -o -s /bin/bash $UN
 RUN echo '%pi ALL=(ALL) NOPASSWD:ALL'>>/etc/sudoers
 
 RUN mkdir -p /home/pi/.ssh /home/pi/runner && \
-    chown -R pi:pi /home/pi && cd /home/pi/runner && \
-	if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-	curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/actions-runner-linux-arm64-${RUNNER_VER}.tar.gz && \
-	elif [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-	curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/actions-runner-linux-x64-${RUNNER_VER}.tar.gz && \
-	fi && \
+    chown -R pi:pi /home/pi && \
     cd /home/pi/runner && \
-    tar xzf ./$RUNNER_BIN && \
-    rm $RUNNER_BIN && \
+	if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+  	  curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/actions-runner-linux-arm64-${RUNNER_VER}.tar.gz && \
+      tar xzf ./actions-runner-linux-arm64-${RUNNER_VER}.tar.gz && \
+      rm actions-runner-linux-arm64-${RUNNER_VER}.tar.gz ;\
+    fi && \
+	if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+	  curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/actions-runner-linux-x64-${RUNNER_VER}.tar.gz && \
+      tar xzf ./actions-runner-linux-x64-${RUNNER_VER}.tar.gz && \
+      rm actions-runner-linux-x64-${RUNNER_VER}.tar.gz ;\
+	fi && \
     chown -R pi:pi /home/pi
 
 COPY ./scripts/start.sh /home/pi/runner
