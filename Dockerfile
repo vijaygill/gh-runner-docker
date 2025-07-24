@@ -3,7 +3,6 @@ ARG UID=1000
 ARG GID=1000
 ARG RUNNER_ARCH=arm64
 ARG RUNNER_VER=2.323.0
-ARG RUNNER_BIN=actions-runner-linux-${RUNNER_ARCH}-${RUNNER_VER}.tar.gz
 
 FROM debian:latest
 ARG UNAME
@@ -33,7 +32,17 @@ RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io d
 RUN groupadd -g $GID -o $UNAME && useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
 RUN echo '%pi ALL=(ALL) NOPASSWD:ALL'>>/etc/sudoers
 
-RUN mkdir -p /home/pi/.ssh /home/pi/runner && chown -R pi:pi /home/pi && cd /home/pi/runner && curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/${RUNNER_BIN} && cd /home/pi/runner && tar xzf ./$RUNNER_BIN && rm $RUNNER_BIN && chown -R pi:pi /home/pi
+RUN mkdir -p /home/pi/.ssh /home/pi/runner && \
+    chown -R pi:pi /home/pi && cd /home/pi/runner && \
+	if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
+	curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/actions-runner-linux-arm64-${RUNNER_VER}.tar.gz && \
+	elif [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+	curl -o $RUNNER_BIN -L https://github.com/actions/runner/releases/download/v${RUNNER_VER}/actions-runner-linux-x64-${RUNNER_VER}.tar.gz && \
+	fi && \
+    cd /home/pi/runner && \
+    tar xzf ./$RUNNER_BIN && \
+    rm $RUNNER_BIN && \
+    chown -R pi:pi /home/pi
 
 COPY ./scripts/start.sh /home/pi/runner
 
